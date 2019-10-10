@@ -1,0 +1,241 @@
+---
+title: "NFL BDB II - Tutorial 1 - SFU SAC"
+author: "Dani Chu"
+date: "10/10/2019"
+output: 
+  html_document: 
+    keep_md: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Here is the [link](https://www.kaggle.com/c/nfl-big-data-bowl-2020/overview) to the Kaggle competition.
+
+The goal of this competition is to predict the number of yards gained on a play given spatial information about the play at the time of hand off and other information about the play. 
+
+First lets load some libraries
+
+```{r, message = F}
+# install.packages("tidyverse")
+# install.packages("snakecase")
+
+library(tidyverse)
+library(snakecase)
+```
+
+
+Now let's read in the data. First make sure you store the data in a folder called data. You can dowload the data from [here](https://www.kaggle.com/c/nfl-big-data-bowl-2020/data).
+
+```{r}
+data <- 
+  read_csv("data/train.csv")
+```
+
+Notice how we got some warning about the WindSpeed column? That's because `read_csv` is guessing that WindSpeed is a number when sometimes it is a string. Let's tell `read_csv` that we have a character column.
+
+```{r}
+data <- 
+  read_csv("data/train.csv", col_types = list(WindSpeed = col_character()))
+```
+
+Now let's rename our columns so that they all have the same naming format. I can do this by renaming all the columns at once using the `rename_all` function. What we are doing is applying the `to_snake_case` function to each column name and then overwriting the old column name with the new one.
+
+```{r}
+data <-
+  data %>%
+  rename_all(to_snake_case)
+```
+
+Now let's look at our data
+
+```{r}
+data
+```
+
+Notice how we can only see some of the columns. We will use the `glimpse` function to take a look at the types of each column and some sample observations.
+
+```{r}
+data %>%
+  glimpse()
+```
+
+This is the second time I've used the `%>%` (pipe). As you read code you can think of it as the English word *then*. It is very powerful in making long code sentences that are more readable. What it does is takes the output of the thing to it's left and makes it the first argument in the next function. 
+
+To illustrate this point we can run the `glimpse` function with data inside the parathesis. We can see that this output is the same as the one above.
+
+```{r}
+glimpse(data)
+```
+
+Furthermore, we can look at the description in the helpfile for the `glimpse` function
+
+```{r}
+# uncomment the line below and run it
+# ?tibble::glimpse
+```
+
+`glimpse` takes two arguments `x`, an object to glimpse at, and `width`, width of the output.
+
+Let's test out how that works in a pipe scenario.
+
+Since `x` is the first argument when we use the pipe `data` will be set to `x`. We can then fill in the next argument with `3`.
+
+```{r}
+data %>%
+  glimpse(3)
+```
+
+It is important to note that if the function has more than one argument and you would like to assign a value to an argument that is not the next one you can specify what you are doing with the name of the argument.
+
+```{r}
+data %>%
+  glimpse(width = 3)
+```
+
+With that aside covered let's get to some Football!
+
+So our data contains one row for every player on every play. So if we count the number of rows for each play on each game we should see 22 rows.
+
+```{r}
+data %>% 
+  count(game_id, play_id)
+```
+
+This checks out.
+
+Now if we remove the columns that describe players and only look at the ones that describe the play we should see 1 row for play.
+
+Note the `distinct` function here keeps only 1 of every duplicate row.
+
+```{r}
+data %>% 
+  select(game_id, play_id, season:yards, home_team_abbr:wind_direction) %>%
+  distinct() %>%
+  count(game_id, play_id)
+
+```
+
+So this looked like it worked. But what if theres a weird play that is not at the top of our list.
+
+```{r}
+
+data %>% 
+  select(game_id, play_id, season:yards, home_team_abbr:wind_direction) %>%
+  distinct() %>%
+  count(game_id, play_id) %>%
+  filter(n != 1)
+```
+
+There are no plays with more than 1 row. This is good!
+
+Let's save this play level data in a new `tibble` (a special type of dataframe).
+
+```{r}
+play_level_data <-
+  data %>% 
+  select(game_id, play_id, season:yards, home_team_abbr:wind_direction) %>%
+  distinct()
+
+```
+
+Lets make a plot to understand our response variable. The `yards` variable is the outcome from each play. Let's look at the distribution of rush yards. We can see that every once in a while we lose yardage, overwhelmingly the yardage gained is small, and sometimes there are large gains (ex. 75 yards).
+
+```{r}
+play_level_data %>%
+  ggplot(aes(x = yards)) +
+  geom_density(fill = "red")
+```
+
+This is a ggplot objec we can add features to it using `+` and new ggplot layers
+
+```{r}
+play_level_data %>%
+  ggplot(aes(x = yards)) +
+  geom_density(fill = "red") +
+  labs(x = "Yards",
+       y = "Density",
+       title = "Distribution of Rush Yards")
+```
+
+Let's make it a little prettier
+
+```{r}
+play_level_data %>%
+  ggplot(aes(x = yards)) +
+  geom_density(fill = "red") +
+  labs(x = "Yards",
+       y = "Density",
+       title = "Distribution of Rush Yards") +
+  theme_bw()
+```
+
+```{r}
+play_level_data %>%
+  ggplot(aes(x = yards)) +
+  geom_density(fill = "red") +
+  theme_bw() +
+  labs(x = "Yards",
+       y = "Density",
+       title = "Distribution of Rush Yards")
+```
+
+
+Now let's see if we can make a plot that takes into account the spatial location of the players.
+
+I've included a helper function to get us started we won't look at that until later. It gives us a function which we can use to help our plot.
+
+```{r}
+source("helper_functions/plot_field.R")
+```
+
+Let's plot the football field.
+
+```{r}
+plot_field(y_min = 0, y_max = 120)
+```
+
+Now lets try and plot one play on the field.
+
+```{r}
+one_play <-
+  data %>%
+  group_by(game_id, play_id) %>%
+  filter(group_indices() == 1)
+```
+
+We should make sure we have 22 observations (1 for each player).
+
+```{r}
+one_play %>%
+  nrow()
+```
+
+Great let's keep it moving. Let's plot a dot for every player in our play.
+
+We'll add `geom_point()` to add the points. Unfortunately the way the plot is set up we have to switch our x and y definitions for now.
+
+
+```{r}
+plot_field(y_min = 0, y_max = 120) +
+  geom_point(data = one_play, aes(x = y, y = x))
+```
+
+Let's zoom in on where the action is.
+
+```{r}
+plot_field(y_min = 50, y_max = 90) +
+  geom_point(data = one_play, aes(x = y, y = x))
+```
+
+These points are quite small and we don't know which team is which.
+
+```{r}
+plot_field(y_min = 50, y_max = 90) +
+  geom_point(data = one_play, aes(x = y, y = x, colour = team), size = 4)
+```
+
+```
