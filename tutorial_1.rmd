@@ -71,32 +71,7 @@ To illustrate this point we can run the `glimpse` function with data inside the 
 glimpse(data)
 ```
 
-Furthermore, we can look at the description in the helpfile for the `glimpse` function
-
-```{r}
-# uncomment the line below and run it
-# ?tibble::glimpse
-```
-
-`glimpse` takes two arguments `x`, an object to glimpse at, and `width`, width of the output.
-
-Let's test out how that works in a pipe scenario.
-
-Since `x` is the first argument when we use the pipe `data` will be set to `x`. We can then fill in the next argument with `3`.
-
-```{r}
-data %>%
-  glimpse(3)
-```
-
-It is important to note that if the function has more than one argument and you would like to assign a value to an argument that is not the next one you can specify what you are doing with the name of the argument.
-
-```{r}
-data %>%
-  glimpse(width = 3)
-```
-
-With that aside covered let's get to some Football!
+Let's get to some Football!
 
 So our data contains one row for every player on every play. So if we count the number of rows for each play on each game we should see 22 rows.
 
@@ -172,17 +147,6 @@ play_level_data %>%
        title = "Distribution of Rush Yards") +
   theme_bw()
 ```
-
-```{r}
-play_level_data %>%
-  ggplot(aes(x = yards)) +
-  geom_density(fill = "red") +
-  theme_bw() +
-  labs(x = "Yards",
-       y = "Density",
-       title = "Distribution of Rush Yards")
-```
-
 
 Now let's see if we can make a plot that takes into account the spatial location of the players.
 
