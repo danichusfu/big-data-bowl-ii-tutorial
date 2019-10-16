@@ -71,6 +71,7 @@ To illustrate this point we can run the `glimpse` function with data inside the 
 glimpse(data)
 ```
 
+<<<<<<< HEAD
 Furthermore, we can look at the description in the helpfile for the `glimpse` function
 
 ```{r}
@@ -154,17 +155,6 @@ play_level_data %>%
        title = "Distribution of Rush Yards") +
   theme_bw()
 ```
-
-```{r}
-play_level_data %>%
-  ggplot(aes(x = yards)) +
-  geom_density(fill = "red") +
-  theme_bw() +
-  labs(x = "Yards",
-       y = "Density",
-       title = "Distribution of Rush Yards")
-```
-
 
 Now let's see if we can make a plot that takes into account the spatial location of the players.
 
