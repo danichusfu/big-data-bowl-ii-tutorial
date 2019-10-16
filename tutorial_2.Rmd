@@ -17,7 +17,7 @@ library(tidyverse)
 library(snakecase)
 ```
 
-Some code from last week.
+Some code from last week. Make sure you have a folder called data that has the data called `train.csv`.
 
 ```{r}
 data <- 
@@ -31,6 +31,27 @@ data <-
 
 # select function
 
+the `select` function allows us to "select" columns. 
+
+
+So here is our data 
+
+```{r}
+data
+```
+
+Now if we only want the columns witht the x and y location of the player and game play and player identifiers.
+
+```{r}
+data %>%
+  select(x, y, play_id, game_id, nfl_id)
+```
+
+Now with that example select all the columns that are player specific.
+
+```{r}
+
+```
 
 
 # filter function
