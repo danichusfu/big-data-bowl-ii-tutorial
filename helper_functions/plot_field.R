@@ -1,5 +1,4 @@
 library(tidyverse)
-library(patchwork)
 
 plot_field <- function(y_min = 38, y_max = 78, paint_size = 7){
   y_min_nums <- ceiling(y_min/10) * 10

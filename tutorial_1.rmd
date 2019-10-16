@@ -80,24 +80,6 @@ Furthermore, we can look at the description in the helpfile for the `glimpse` fu
 
 `glimpse` takes two arguments `x`, an object to glimpse at, and `width`, width of the output.
 
-Let's test out how that works in a pipe scenario.
-
-Since `x` is the first argument when we use the pipe `data` will be set to `x`. We can then fill in the next argument with `3`.
-
-```{r}
-data %>%
-  glimpse(3)
-```
-
-It is important to note that if the function has more than one argument and you would like to assign a value to an argument that is not the next one you can specify what you are doing with the name of the argument.
-
-```{r}
-data %>%
-  glimpse(width = 3)
-```
-
-With that aside covered let's get to some Football!
-
 So our data contains one row for every player on every play. So if we count the number of rows for each play on each game we should see 22 rows.
 
 ```{r}
