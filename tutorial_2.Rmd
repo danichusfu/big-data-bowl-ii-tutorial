@@ -50,14 +50,46 @@ data %>%
 Now with that example select all the columns that are player specific.
 
 ```{r}
-
+# add in your own code
+data
 ```
 
 
 # filter function
 
+Let's say we want to find all the plays where Todd Gurley is on the field. We want to "filter" our data set for when we see Todd Gurley. There are 5 main conditions, equality `==`, less than `<`,  greater than `>`, less than or equal to `<=`, greater than or equal to `>=`
+
+```{r}
+data %>%
+  filter(display_name == "Todd Gurley")
+```
+
+Now we have way too many columns so let's use what we learned before to only get the `play_id` column. Save that into a variable called `todd_play_ids`
+
+```{r}
+todd_play_ids <-
+  # add in your own code
+  data 
+```
+
+Now we want to have all the players on the field on plays where Todd Gurley was on the field. We're going to use a new condition called `%in%`. This says if the value in our column is "in" the "column" on the right then keep it.
+
+```{r}
+data %>%
+  filter(play_id %in% todd_play_ids$play_id)
+```
+
+Finally, try this yourself. We want a dataset that has all the players who are in the end zone at the time of handoff. One endzone is between 0 and 10 the other one is between 110 and 120.
+
+```{r}
+# add in your own code
+data
+
+```
 
 # mutate function
+
+The mutate funciton allows us to create new columns.
 
 # group by / summarise functions
 
