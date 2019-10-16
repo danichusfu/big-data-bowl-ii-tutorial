@@ -16,3 +16,28 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(snakecase)
 ```
+
+Some code from last week.
+
+```{r}
+data <- 
+  read_csv("data/train.csv", col_types = list(WindSpeed = col_character()))
+
+data <-
+  data %>%
+  rename_all(to_snake_case)
+```
+
+
+# select function
+
+
+
+# filter function
+
+
+# mutate function
+
+# group by / summarise functions
+
+
