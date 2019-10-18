@@ -37,21 +37,24 @@ the `select` function allows us to "select" columns.
 So here is our data 
 
 ```{r}
-data
+data %>% head()
+data %>% str()
+data %>% dim()
+data %>% names()
 ```
 
-Now if we only want the columns witht the x and y location of the player and game play and player identifiers.
+Now if we only want the columns with the x and y location of the player and game play and player identifiers.
 
 ```{r}
 data %>%
-  select(x, y, play_id, game_id, nfl_id)
+  select(x, y, play_id, game_id, nfl_id) %>% 
+  head()
 ```
 
 Now with that example select all the columns that are player specific.
 
 ```{r}
 # add in your own code
-data
 ```
 
 
@@ -64,12 +67,40 @@ data %>%
   filter(display_name == "Todd Gurley")
 ```
 
+More examples:
+```{r}
+# get player specific attributes in 2017 
+data %>% 
+  filter(season == 2017) %>% 
+  select(nfl_id,display_name, player_height, player_weight) %>% 
+  unique()
+
+# get RB whose weight is greater and equal to 200
+data %>%
+  filter(player_weight >= 200,
+         position == "RB") %>%
+  select(nfl_id,display_name) %>% 
+  unique()
+
+data %>% count(position) %>% arrange(desc(n))
+
+data %>% select(nfl_id,position) %>% 
+  unique() %>% 
+  count(position) %>% 
+  arrange(desc(n))
+
+data %>% filter(position == "DL") %>% select(display_name) %>% unique
+
+```
+
 Now we have way too many columns so let's use what we learned before to only get the `play_id` column. Save that into a variable called `todd_play_ids`
 
 ```{r}
 todd_play_ids <-
   # add in your own code
-  data 
+  data %>% 
+  filter(display_name == "Todd Gurley") %>% 
+  select(play_id, season, game_id)
 ```
 
 Now we want to have all the players on the field on plays where Todd Gurley was on the field. We're going to use a new condition called `%in%`. This says if the value in our column is "in" the "column" on the right then keep it.
@@ -79,18 +110,33 @@ data %>%
   filter(play_id %in% todd_play_ids$play_id)
 ```
 
+More examples,
+```{r}
+data %>% filter(play_id==20170910090051)
+data %>% 
+  filter(play_id==20170910090051) %>% 
+  ggplot(aes(x = x, y = y,color = team)) +  geom_point()
+```
+
 Finally, try this yourself. We want a dataset that has all the players who are in the end zone at the time of handoff. One endzone is between 0 and 10 the other one is between 110 and 120.
 
 ```{r}
 # add in your own code
 data
-
 ```
 
 # mutate function
 
 The mutate funciton allows us to create new columns.
 
+```{r}
+data %>% select(s) %>% summary
+
+data %>% select(s) %>% hist
+
+data %>% 
+  mutate(fast_speed = ifelse(s > 4, yes = "fast", no = "not fast")) %>% 
+  select(s, fast_speed) 
+```
+
 # group by / summarise functions
-
-
