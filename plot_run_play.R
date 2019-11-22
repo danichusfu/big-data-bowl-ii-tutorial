@@ -17,11 +17,11 @@ train <-
 one_play <-
   train %>%
   group_by(game_id, play_id) %>%
-  #filter(group_indices() == 1)
-  filter(play_id == 20170910001102)
+  filter(group_indices() == 1)
+ # filter(play_id == 20170910001102)
 
 
-plot_field(y_min = 80, y_max = 110) +
+plot_field(y_min = 30, y_max = 60) +
   geom_point(data = one_play, aes(x = x, y = y, colour = team), size = 7) +
   geom_segment(data = one_play, aes(x = x, y = y, xend = x_end, yend = y_end),
                arrow = arrow(length = unit(0.4, "cm")),
