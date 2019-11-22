@@ -16,17 +16,17 @@ read_train_data <- function(){
            yards_from_own_goal = if_else(yard_line == 50, 50, yards_from_own_goal),
            x_old = x,
            y_old = y,
-           x           = if_else(to_left, 120 - x, x) - 10, ## Standardizes X
+           x           = if_else(to_left, 120 - x, x), ## Standardizes X
            y           = if_else(to_left, 160/3 - y, y),
-           orientation = if_else(to_left, 180 - orientation, orientation),
-           dir         = if_else(to_left, 180 - dir, dir),
+           orient_std_1= if_else(to_left & orientation < 90, orientation + 360, orientation),
+           orient_std_1= if_else(!to_left & orientation > 270, orientation - 360, orient_std_1),
+           orient_std_2= if_else(to_left, orient_std_1 - 180, orient_std_1),
+           dir_std_1   = if_else(to_left & dir < 90, dir + 360, dir),
+           dir_std_1   = if_else(!to_left & dir > 270, dir - 360, dir_std_1),
+           dir_std_2   = if_else(to_left, dir_std_1 - 180, dir_std_1),
            end_yard_line = yards_from_own_goal + yards)    ## Standardized Y
   
   return(train)
   
 }
 
-train <- read_train_data()
-
-
-train
